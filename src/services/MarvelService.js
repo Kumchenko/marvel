@@ -35,7 +35,7 @@ class MarvelService {
     }
 
     _transformCharacter = (char) => {
-        let { name, description, thumbnail, urls } = char;
+        let { id, name, description, thumbnail, urls, comics } = char;
         if (description.length > 228) {
             description = description.slice(0, 228) + '...';
         }
@@ -43,11 +43,13 @@ class MarvelService {
             description = "This character is so confidential, that's why we can't find information about him.";
         }
         return {
+            id: id,
             name: name,
             description: description,
             thumbnail: `${thumbnail.path}.${thumbnail.extension}`,
             homepage: urls[0].url,
-            wiki: urls[1].url
+            wiki: urls[1].url,
+            comics: comics.items
         }
     }
 }

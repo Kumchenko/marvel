@@ -6,9 +6,8 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component {
-
     state = {
-        char: {},
+        char: null,
         loading: true,
         error: false
     }
@@ -17,19 +16,6 @@ class RandomChar extends Component {
 
     componentDidMount() {
         this.updateChar();
-        // this.timer = setInterval(this.updateChar, 15000);
-    }
-
-    componentWillUnmount() {
-        // clearInterval(this.timer);
-    }
-
-    onError = () => {
-        this.setState({
-            char: {},
-            loading: false,
-            error: true
-        });
     }
 
     onCharLoaded = (char) => {
@@ -44,6 +30,14 @@ class RandomChar extends Component {
         this.setState({
             loading: true,
             error: false
+        });
+    }
+
+    onError = () => {
+        this.setState({
+            char: null,
+            loading: false,
+            error: true
         });
     }
 

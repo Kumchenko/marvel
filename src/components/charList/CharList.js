@@ -42,10 +42,15 @@ class CharList extends Component{
     }
     
     renderChars = (chars) => {
-        let charList = chars.map((char, index) => {
-            const { name, thumbnail } = char;
+        let charList = chars.map(char => {
+            const { name, thumbnail, id } = char;
+            const changeId = () => {this.props.changeSelectedId(id)}
             return (
-                <li className="char__item" key={index}>
+                <li 
+                    className="char__item" 
+                    key={id}
+                    onClick={changeId}
+                >
                     <img 
                         src={thumbnail} 
                         alt={`${name} thumbnail`}
