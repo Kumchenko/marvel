@@ -36,7 +36,7 @@ class MarvelService {
 
     _transformCharacter = (char) => {
         let { name, description, thumbnail, urls } = char;
-        if (description.length > 231) {
+        if (description.length > 228) {
             description = description.slice(0, 228) + '...';
         }
         if (!description) {
