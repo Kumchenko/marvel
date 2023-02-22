@@ -34,7 +34,7 @@ class CharList extends Component {
                 loading: false,
                 error: false,
                 newLoading: false,
-                offset: state.offset + 9,
+                offset: state.offset + newChars.length,
                 charsEnded: ended
             }
         })
@@ -76,8 +76,15 @@ class CharList extends Component {
     }
 
     componentDidMount() {
-        this.onRequest();
+        if (!localStorage.getItem('charsCount')) {
+            localStorage.setItem('charsCount', 9);
+        }
+        this.onRequest(localStorage.getItem('charsCount'));
         //window.addEventListener('scroll', this.autoRequest);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        localStorage.setItem('charsCount', this.state.chars.length)
     }
 
     componentWillUnmount() {
@@ -91,15 +98,15 @@ class CharList extends Component {
         }
     }
 
-    onRequest = () => {
+    onRequest = (limit = 9) => {
         this.onCharsLoading();
-        this.marvelService.getAllCharacters(this.state.offset)
+        this.marvelService.getAllCharacters(this.state.offset, limit)
             .then(this.onCharsLoaded)
             .catch(this.onError)
     }
 
     render() {
-        const { chars, loading, error, newLoading } = this.state;
+        const { chars, loading, error, newLoading, } = this.state;
 
         const content = this.renderChars(chars);
         const spinner = loading ? <Spinner /> : null;
@@ -113,7 +120,7 @@ class CharList extends Component {
                 <button
                     className="button button__main button__long"
                     disabled={newLoading}
-                    onClick={this.onRequest}
+                    onClick={() => this.onRequest()}
                     style={{ 'display': this.state.charsEnded ? 'none' : 'block' }}
                 >
                     <div className="inner">load more</div>

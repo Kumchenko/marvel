@@ -23,8 +23,8 @@ class MarvelService {
         return await res.json();
     }
 
-    getAllCharacters = async (offset = this._charOffset) => {
-        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
+    getAllCharacters = async (offset = this._charOffset, limit) => {
+        const res = await this.getResource(`${this._apiBase}characters?limit=${limit}&offset=${offset}&${this._apiKey}`);
         return {
             chars: res.data.results.map(this._transformCharacter),
             ended: res.data.total - res.data.offset <= 9 
@@ -38,8 +38,8 @@ class MarvelService {
 
     _transformCharacter = (char) => {
         let { id, name, description, thumbnail, urls, comics } = char;
-        if (description.length > 228) {
-            description = description.slice(0, 228) + '...';
+        if (description.length > 218) {
+            description = description.slice(0, 218) + '...';
         }
         if (!description) {
             description = "This character is so confidential, that's why we can't find information about him.";
