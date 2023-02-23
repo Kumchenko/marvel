@@ -15,7 +15,8 @@ class CharList extends Component {
             error: false,
             newLoading: false,
             offset: 210,
-            charsEnded: false
+            charsEnded: false,
+            activeId: null
         }
     }
 
@@ -52,12 +53,21 @@ class CharList extends Component {
     renderChars = (chars) => {
         let charList = chars.map(char => {
             const { name, thumbnail, id } = char;
-            const changeId = () => { this.props.changeSelectedId(id) }
+            const onCharSelected = (e) => {             
+                if ((e.key === "Enter" && e.type === "keydown") || e.type === "click") {
+                    this.props.changeSelectedId(id);
+                    this.setState({
+                        activeId: id
+                    })
+                }
+            }
             return (
                 <li
-                    className="char__item"
+                    className={"char__item" + (this.state.activeId === id ? " char__item_selected" : "")}
                     key={id}
-                    onClick={changeId}
+                    onKeyDown={onCharSelected}
+                    onClick={onCharSelected}
+                    tabIndex={0}
                 >
                     <img
                         src={thumbnail}
