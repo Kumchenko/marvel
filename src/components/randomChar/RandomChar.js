@@ -1,50 +1,31 @@
 import { useState, useEffect } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 const RandomChar = () => {
-    const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    const marvelService = new MarvelService();
+    const [char, setChar] = useState(null)
+    const { loading, error, getCharacter } = useMarvelService();
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-        setError(false);
-    }
-
-    const onCharLoading = () => {
-        setChar(null);
-        setLoading(true);
-        setError(false);
-    }
-
-    const onError = () => {
-        setChar(null);
-        setLoading(false);
-        setError(true);
     }
 
     const updateChar = () => {
-        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        onCharLoading();
-        marvelService.getCharacter(id)
-            .then(res => onCharLoaded(res))
-            .catch(onError);
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
+        getCharacter(id)
+            .then(res => onCharLoaded(res));
     }
 
     useEffect(() => {
         updateChar();
     }, []);
 
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = char && !(loading || error) ? <View char={char}/> : null;
+    const errorMessage = error ? <ErrorMessage /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const content = char && !(loading || error) ? <View char={char} /> : null;
 
     return (
         <div className="randomchar">
@@ -68,14 +49,14 @@ const RandomChar = () => {
     )
 }
 
-const View = ({char}) => {
+const View = ({ char }) => {
     const { name, description, thumbnail, homepage, wiki } = char;
     return (
         <div className="randomchar__block">
-            <img 
-                src={thumbnail} 
-                alt={`${name} thumbnail`} 
-                className="randomchar__img" 
+            <img
+                src={thumbnail}
+                alt={`${name} thumbnail`}
+                className="randomchar__img"
                 style={thumbnail.indexOf('image_not_available') > 0 ? { objectFit: 'contain' } : { objectFit: 'cover' }}
             />
             <div className="randomchar__info">

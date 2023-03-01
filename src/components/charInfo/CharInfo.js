@@ -1,46 +1,28 @@
 import { useState, useEffect } from 'react';
 
 import './charInfo.scss';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from "../skeleton/Skeleton";
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
+    const { loading, error, getCharacter } = useMarvelService();
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-        setError(false);
-    }
-
-    const onCharLoading = () => {
-        setChar(null);
-        setLoading(true);
-        setError(false);
-    }
-
-    const onError = () => {
-        setChar(null);
-        setLoading(false);
-        setError(true);
     }
 
     useEffect(() => {
         if (props.charId) {
-            onCharLoading();
-            marvelService.getCharacter(props.charId)
-                .then(onCharLoaded)
-                .catch(onError);
+            getCharacter(props.charId)
+                .then(onCharLoaded);
         }
     }, [props.charId]);
 
-    const content = char ? View(char) : null;
+    const content = char && !loading ? View(char) : null;
     const skeleton = !(loading || char || error) ? <Skeleton /> : null;
     const spinner = loading ? <Spinner /> : null;
     const errorMessage = error ? <ErrorMessage /> : null;
@@ -100,7 +82,7 @@ const View = (char) => {
             <div className="char__descr">{description}</div>
             <div className="char__comics">Comics:</div>
             <ul className="char__comics-list">
-                { comics.length > 0 ? getComicsElements(comics) : 'There is no comics with this character'}
+                {comics.length > 0 ? getComicsElements(comics) : 'There is no comics with this character'}
             </ul>
         </>
     )

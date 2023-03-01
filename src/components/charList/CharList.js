@@ -1,46 +1,31 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import './charList.scss';
 
 const CharList = (props) => {
     const [charList, setCharList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newLoading, setNewLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charsEnded, setCharsEnded] = useState(false);
     const [activeId, setActiveId] = useState(null);
 
-    const marvelService = new MarvelService();
-
-    const onCharsLoading = () => {
-        setNewLoading(true);
-    }
+    const { loading, error, getAllCharacters } = useMarvelService();
 
     const onCharsLoaded = ({ chars: newChars, ended }) => {
         setCharList(charList => [...charList, ...newChars]);
-        setLoading(false);
-        setError(false);
         setNewLoading(false);
         setOffset(offset => offset + newChars.length);
         setCharsEnded(ended);
     }
 
-    const onError = () => {
-        setCharList([]);
-        setLoading(false);
-        setError(true);
-        setNewLoading(false);
-    }
-
     const renderChars = (charList) => {
         charList = charList.map(char => {
             const { name, thumbnail, id } = char;
-            const onCharSelected = (e) => {             
+            const onCharSelected = (e) => {
                 if ((e.key === "Enter" && e.type === "keydown") || e.type === "click") {
                     props.changeSelectedId(id);
                     setActiveId(id);
@@ -71,10 +56,8 @@ const CharList = (props) => {
     }
 
     const onRequest = (limit = 9) => {
-        onCharsLoading();
-        marvelService.getAllCharacters(offset, limit)
-            .then(onCharsLoaded)
-            .catch(onError)
+        getAllCharacters(offset, limit)
+            .then(onCharsLoaded);
     }
 
     useEffect(() => {
@@ -98,7 +81,7 @@ const CharList = (props) => {
     // }
 
     const content = renderChars(charList);
-    const spinner = loading ? <Spinner /> : null;
+    const spinner = loading && !newLoading ? <Spinner /> : null;
     const errorMessage = error ? <ErrorMessage /> : null;
 
     return (
@@ -109,7 +92,10 @@ const CharList = (props) => {
             <button
                 className="button button__main button__long"
                 disabled={newLoading}
-                onClick={onRequest}
+                onClick={() => {
+                    setNewLoading(true);
+                    onRequest(9);
+                }}
                 style={{ 'display': charsEnded ? 'none' : 'block' }}
             >
                 <div className="inner">load more</div>
