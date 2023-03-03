@@ -62,7 +62,10 @@ const useMarvelService = () => {
             thumbnail: `${thumbnail.path}.${thumbnail.extension}`,
             homepage: urls[0].url,
             wiki: urls[1].url,
-            comics: comics.items
+            comics: comics.items.map(comic => ({
+                id: comic.resourceURI.replace('http://gateway.marvel.com/v1/public/comics/', ''),
+                name: comic.name
+            }))
         }
     }
 

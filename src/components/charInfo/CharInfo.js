@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import './charInfo.scss';
 import useMarvelService from '../../services/MarvelService';
@@ -47,7 +48,9 @@ const View = (char) => {
                 const item = comics[i];
                 const elem = (
                     <li key={i} className="char__comics-item">
-                        {item.name}
+                        <Link to={`/comics/${item.id}`}>
+                            {item.name}
+                        </Link>
                     </li>
                 );
                 result.push(elem);
