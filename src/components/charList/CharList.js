@@ -41,7 +41,7 @@ const CharList = (props) => {
                 >
                     <img
                         src={thumbnail}
-                        alt={`${name} thumbnail`}
+                        alt={name}
                         style={thumbnail.indexOf('image_not_available') > 0 ? { objectFit: 'contain' } : { objectFit: 'cover' }}
                     />
                     <div className="char__name">{name}</div>
